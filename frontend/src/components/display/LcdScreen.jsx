@@ -25,7 +25,7 @@ const LcdScreen = ({ row1Data, row2Data, backlight, onCellClick }) => {
 
   // LOGIC: If backlight is OFF, the glass gets dark and text gets dim.
   const screenStateClass = backlight === "OFF"
-    ? "opacity-40 grayscale brightness-50" // Dimmed state
+    ? "opacity-50 brightness-10" // Dimmed state
     : "opacity-100 brightness-100";        // ON state
 
   return (
@@ -81,7 +81,7 @@ const LcdScreen = ({ row1Data, row2Data, backlight, onCellClick }) => {
             `}
          >
             {/* Backlight Glow (Only visible when ON due to parent opacity) */}
-            <div className="absolute inset-0 bg-cyan-500/10 blur-xl pointer-events-none"></div>
+            <div className="absolute inset-0 bg-cyan-500/40 blur-xl pointer-events-none"></div>
 
             <div className="absolute top-0 right-0 w-[150%] h-full bg-gradient-to-b from-white/5 to-transparent transform -skew-x-45 pointer-events-none z-20"></div>
 

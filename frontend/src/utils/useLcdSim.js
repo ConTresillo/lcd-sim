@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
-// You will likely need to import other utility functions/constants here
-// import { ACTION_COMMANDS, ... } from './LcdCommands';
+// NOTE: Assuming LcdCommands and other necessary utilities are available in the scope
+// If you need to access specific constants (like CURSOR_HIDDEN_HEX), you must import them.
+// import { CURSOR_HIDDEN_HEX } from './LcdCommands';
 
 // Helper to convert hex string to integer
 const hexStringToInt = (hexStr) => parseInt(hexStr.replace('0x', ''), 16);
@@ -42,21 +43,67 @@ export const useLcdSim = () => {
   const [displayVisible, setDisplayVisible] = useState('Display OFF');
   const [cursorStyle, setCursorStyle] = useState('Hidden');
 
-  // --- HANDLERS (Moved from LcdController) ---
+  // --- UTILITY HANDLERS ---
 
   const addLog = (msg) => setLogs(prev => [...prev.slice(-4), `> ${msg}`]);
 
   const sendCommand = (hexCode) => {
+    // If input is already a hex string, convert to integer first
     const hexVal = typeof hexCode === 'string' ? hexStringToInt(hexCode) : hexCode;
     const hexStr = '0x' + hexVal.toString(16).toUpperCase().padStart(2,'0');
     addLog(`Sending Command: ${hexStr}`);
   };
 
-  // You would move handleCellClick and other primary handlers here too
+  // --- INTERACTION HANDLERS (Needed by GpioPanel, DataPin, PulseButton, Data Input) ---
 
-  // THE MAIN CONFIGURATION HANDLER
+  // HANDLER: Toggle Data Pin (used by DataPin buttons)
+  const toggleDataBit = (index) => {
+    const newBus = [...dataBus];
+    newBus[index] = newBus[index] === 1 ? 0 : 1;
+    setDataBus(newBus);
+  };
+
+  // HANDLER: Manual EN Switch (Toggle)
+  const handleManualEn = () => {
+    const newState = !enState;
+    setEnState(newState);
+    addLog(`EN Line set to ${newState ? 'HIGH' : 'LOW'}`);
+  };
+
+  // HANDLER: Handle EN Pulse
+  const handleEnPulse = () => {
+    setEnState(true);
+    addLog("Pulse: EN (High -> Low)");
+    setTimeout(() => { setEnState(false); }, 200);
+  };
+
+  // HANDLER: Handle Backlight Change
+  const handleBacklightChange = (newStatus) => {
+    setBacklight(newStatus);
+    addLog(`Backlight turned ${newStatus}`);
+  };
+
+  // HANDLER: Handle Send (Data Register)
+  const handleSend = () => {
+    if(!inputValue) return;
+    addLog(`Sending ${inputFormat}: '${inputValue}'...`);
+    setInputValue("");
+  };
+
+  // HANDLER: Handle Cell Click (Set DDRAM Address command)
+  const handleCellClick = (row, col) => {
+    const rowOffset = row === 0 ? 0x00 : 0x40;
+    const ddramAddress = 0x80 | rowOffset | col;
+    const hexCommand = '0x' + ddramAddress.toString(16).toUpperCase().padStart(2, '0');
+
+    addLog(`Cursor set to: R${row}, C${col}`);
+    sendCommand(hexCommand);
+  };
+
+
+  // THE MAIN CONFIGURATION HANDLER (Used by StatePanel)
   const handleConfigChange = ({ newConfig, changedProp, commands }) => {
-    // 1. Update states via their setters (use the ones defined inside this hook!)
+    // 1. Update states via their setters
     setBusWidth(newConfig.busWidth);
     setLineCount(newConfig.lineCount);
     setEntryMode(newConfig.entryMode);
@@ -84,11 +131,12 @@ export const useLcdSim = () => {
     },
     // Setters (Data for modifying state/input)
     setters: {
-      setGpio, /* ... other setters ... */ setInputValue, setInputFormat
+      setGpio, setInputFormat, setInputValue, setBacklight, // setBacklight was missing
     },
     // Handler functions (Logic/Actions)
     handlers: {
-      addLog, sendCommand, handleConfigChange, /* handleCellClick, etc. */
+      addLog, sendCommand, handleConfigChange, handleCellClick,
+      toggleDataBit, handleManualEn, handleEnPulse, handleBacklightChange, handleSend
     },
     // Utility for the Command Logic
     utils: {

@@ -17,7 +17,7 @@ import NeonButton from '../ui/NeonButton';
 import NeonDropdown from '../ui/NeonDropdown';
 import PulseButton from '../ui/PulseButton';
 
-// NOTE: All prior logic functions (hexStringToInt, getFunctionSetCommand) are now inside useLcdSim.js
+// NOTE: All prior logic functions (hexStringToInt, getFunctionSetCommand, etc.) are now inside useLcdSim.js
 
 const LcdController = () => {
 
@@ -40,7 +40,7 @@ const LcdController = () => {
   } = handlers;
 
   const {
-    setGpio, setInputFormat, setInputValue
+    setGpio, setInputFormat, setInputValue, setBacklight // Added setBacklight
   } = setters;
 
 
@@ -109,7 +109,7 @@ const LcdController = () => {
                     enState={enState}
                     onManualEn={handleManualEn}
                     backlight={backlight}
-                    setBacklight={handleBacklightChange}
+                    setBacklight={setBacklight} // Passed setter from the hook
                 />
             </div>
 
