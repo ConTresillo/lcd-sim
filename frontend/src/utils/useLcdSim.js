@@ -98,9 +98,15 @@ export const useLcdSim = () => {
     const ddramAddress = 0x80 | rowOffset | col;
     const hexCommand = '0x' + ddramAddress.toString(16).toUpperCase().padStart(2, '0');
 
+    // 👇 ADD THESE TWO LINES 👇
+    setCursorRow(row);
+    setCursorCol(col);
+    // 👆 ADD THESE TWO LINES 👆
+
     addLog(`Cursor set to: R${row}, C${col}`);
+    // This sends the command, which should also update the state, but this direct update ensures immediate visibility.
     sendCommand(hexCommand);
-  };
+};
 
 
   // THE MAIN CONFIGURATION HANDLER (Used by StatePanel)
