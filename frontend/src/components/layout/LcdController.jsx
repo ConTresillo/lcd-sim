@@ -14,6 +14,26 @@ import NeonButton from '../ui/NeonButton';
 import NeonDropdown from '../ui/NeonDropdown';
 import PulseButton from '../ui/PulseButton';
 
+// Helper to convert hex string to integer, needed for sendCommand
+const hexStringToInt = (hexStr) => parseInt(hexStr.replace('0x', ''), 16);
+
+// ------------------------------------------
+// CORE LOGIC: FUNCTION SET COMMAND CALCULATION
+// ------------------------------------------
+const getFunctionSetCommand = (width, lines) => {
+  // Logic based on combining the setting bits (F, N, DL bits)
+  const is2Line = lines.includes('2 Lines');
+  const is8Bit = width.includes('8-Bit');
+
+  if (is8Bit && is2Line) return '0x38'; // 8-bit, 2 Line
+  if (is8Bit && !is2Line) return '0x30'; // 8-bit, 1 Line
+  if (!is8Bit && is2Line) return '0x28'; // 4-bit, 2 Line
+  if (!is8Bit && !is2Line) return '0x20'; // 4-bit, 1 Line
+
+  return '0x??'; // Fallback
+};
+
+
 const LcdController = () => {
   // --- STATE ---
   const [logs, setLogs] = useState(["> Initializing LCD...", "> Mode set to 4-Bit.", "> Backlight turned ON."]);
@@ -27,6 +47,13 @@ const LcdController = () => {
      row1: Array(16).fill(32),
      row2: Array(16).fill(32)
   });
+
+  // NEW: STATES FOR CONFIGURATION
+  const [busWidth, setBusWidth] = useState('4-Bit Mode');
+  const [lineCount, setLineCount] = useState('2 Lines (16x2)');
+  const [entryMode, setEntryMode] = useState('Left to Right (Inc)');
+  const [displayVisible, setDisplayVisible] = useState('Display OFF');
+  const [cursorStyle, setCursorStyle] = useState('Hidden');
 
   // --- LOGIC ---
   const addLog = (msg) => setLogs(prev => [...prev.slice(-4), `> ${msg}`]);
@@ -61,9 +88,38 @@ const LcdController = () => {
   };
 
   const sendCommand = async (hexCode) => {
-    const hexStr = '0x' + hexCode.toString(16).toUpperCase().padStart(2,'0');
+    // If input is already a hex string, convert to integer first
+    const hexVal = typeof hexCode === 'string' ? hexStringToInt(hexCode) : hexCode;
+    const hexStr = '0x' + hexVal.toString(16).toUpperCase().padStart(2,'0');
     addLog(`Sending Command: ${hexStr}`);
   };
+
+
+// MODIFIED: UNIFIED HOMOGENEOUS HANDLER FOR STATEPANEL CHANGES
+const handleConfigChange = ({ newConfig, changedProp, commands }) => {
+    // 1. Update all component states first
+    setBusWidth(newConfig.busWidth);
+    setLineCount(newConfig.lineCount);
+    setEntryMode(newConfig.entryMode);
+    setDisplayVisible(newConfig.displayVisible);
+    setCursorStyle(newConfig.cursorStyle);
+
+    let commandToSend = undefined;
+
+    // --- HOMOGENEOUS COMMAND LOGIC ---
+    if (changedProp === 'busWidth' || changedProp === 'lineCount') {
+        // 1. Send the calculated Function Set command
+        commandToSend = getFunctionSetCommand(newConfig.busWidth, newConfig.lineCount);
+        addLog(`Function Set determined by: ${newConfig.busWidth} + ${newConfig.lineCount}`);
+        sendCommand(commandToSend);
+    } else if (commands && commands.length > 0) {
+        // 2. Handle single command or constraint sequence
+        commands.forEach(cmd => {
+            sendCommand(cmd);
+        });
+    }
+};
+
 
   const getPlaceholder = () => {
     if (inputFormat === "Hex") return "e.g. 0x4A";
@@ -220,7 +276,10 @@ const LcdController = () => {
 
             {/* STATE PANEL (Fixed below) */}
             <div className="relative z-10">
-                <StatePanel onConfigChange={sendCommand}/>
+                <StatePanel
+                    config={{ busWidth, lineCount, entryMode, displayVisible, cursorStyle }}
+                    onConfigChange={handleConfigChange}
+                />
             </div>
 
         </div>
