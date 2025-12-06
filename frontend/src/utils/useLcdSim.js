@@ -98,15 +98,13 @@ export const useLcdSim = () => {
     const ddramAddress = 0x80 | rowOffset | col;
     const hexCommand = '0x' + ddramAddress.toString(16).toUpperCase().padStart(2, '0');
 
-    // 👇 ADD THESE TWO LINES 👇
+    // ✅ FIX APPLIED: Update state before sending command
     setCursorRow(row);
     setCursorCol(col);
-    // 👆 ADD THESE TWO LINES 👆
 
     addLog(`Cursor set to: R${row}, C${col}`);
-    // This sends the command, which should also update the state, but this direct update ensures immediate visibility.
     sendCommand(hexCommand);
-};
+  };
 
 
   // THE MAIN CONFIGURATION HANDLER (Used by StatePanel)
@@ -135,7 +133,8 @@ export const useLcdSim = () => {
     // Current State values (Data for rendering)
     state: {
       logs, gpio, enState, dataBus, inputValue, inputFormat, backlight, lcdRows,
-      busWidth, lineCount, entryMode, displayVisible, cursorStyle
+      busWidth, lineCount, entryMode, displayVisible, cursorStyle,
+      cursorRow, cursorCol // Expose position
     },
     // Setters (Data for modifying state/input)
     setters: {
