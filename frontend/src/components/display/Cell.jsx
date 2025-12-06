@@ -73,6 +73,25 @@ const Cell = ({ char, onCellClick, row, col, isActiveCursor, cursorStyle }) => {
                 pixelClasses = 'bg-cyan-500 shadow-[0_0_4px_#22d3ee] opacity-100';
             }
 
+            // --- PIXEL RENDERING LOGIC (The core fix) ---
+
+            if (isBlinkingStyle && isBlinkingPhase) {
+                // Scenario 1: BLINKING BLOCK - Visible Phase (This is JS logic, assume OFF for now)
+                pixelClasses = 'bg-cyan-500 shadow-[0_0_4px_#22d3ee] opacity-100';
+            }
+            else if (isUnderlineStyle && rowPixel === 7) {
+                // ✅ FIX: SCENARIO 2 - UNDERLINE CURSOR
+                // Forces the last row pixel (row 7) to be ON.
+                pixelClasses = 'bg-cyan-300 shadow-[0_0_4px_#22d3ee] opacity-100';
+            }
+            else if (isCharacterOn) {
+                // Scenario 3: STANDARD CHARACTER PIXEL
+                pixelClasses = 'bg-cyan-300 shadow-[0_0_4px_#22d3ee] opacity-100';
+            }
+            else {
+                // Scenario 4: OFF PIXEL
+                pixelClasses = 'bg-[#0f1f22] border border-cyan-900/20 opacity-100';
+            }
 
             return (
               <div
