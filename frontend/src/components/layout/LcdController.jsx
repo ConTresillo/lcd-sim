@@ -33,7 +33,7 @@ const LcdController = () => {
     logs, gpio, enState, dataBus, inputValue, inputFormat, backlight, lcdRows,
     busWidth, lineCount, entryMode, displayVisible, cursorStyle,
     // ✅ NEW: Cursor position state pulled from the hook
-    cursorRow, cursorCol, isCursorVisibleInCycle
+    cursorRow, cursorCol
   } = state;
 
   const {
@@ -128,7 +128,6 @@ const LcdController = () => {
                         cursorRow={cursorRow}
                         cursorCol={cursorCol}
                         cursorStyle={cursorStyle}
-                        isBlinkingPhase={isCursorVisibleInCycle}
                     />
                 </div>
 
