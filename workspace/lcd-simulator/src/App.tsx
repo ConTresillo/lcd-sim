@@ -1,11 +1,11 @@
 // // src/App.tsx
 // import * as React from 'react';
-// import ControllerTest from './components/controls/ControllerTest';
+// import ComponentTest from './components/controls/ComponentTest';
 // 
 // const App: React.FC = () => {
 //   return (
 //     <div className="min-h-screen">
-//       <ControllerTest />
+//       <ComponentTest />
 //     </div>
 //   );
 // };
@@ -13,12 +13,12 @@
 // export default App;
 
 import React from 'react';
-import ControllerTest from './components/controls/ControllerTest';
+import ComponentTest from './components/ComponentTest.tsx';
 
 const App: React.FC = () => {
   return (
     <div className="min-h-screen">
-      <ControllerTest />
+      <ComponentTest />
     </div>
   );
 };

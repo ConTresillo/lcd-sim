@@ -6,7 +6,7 @@
 //   active: boolean;
 //   label: string;
 //   onClick?: () => void;
-//   onPulse?: () => void; // <-- added for ControllerTest
+//   onPulse?: () => void; // <-- added for ComponentTest
 // }
 // 
 // const PulseButton: React.FC<PulseButtonProps> = ({ active, label, onClick, onPulse }) => {
