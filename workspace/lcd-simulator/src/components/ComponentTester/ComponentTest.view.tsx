@@ -1,22 +1,49 @@
-import React, { useState } from "react";
-import { useTheme } from "./themes/ThemeProvider";
+import React from "react";
+import { useTheme } from "../themes/ThemeProvider";
+import { DataPin } from "../controls/DataPin";
+import { IconButton } from "../controls/IconButton";
+import { MenuDropdown } from "../controls/MenuDropdown";
+import { PulseButton } from "../controls/PulseButton";
+import { TextInput } from "../controls/TextInput";
+import { ToggleSwitch } from "../controls/ToggleSwitch";
+import { LcdPixel } from "../lcd/LcdPixel";
+import { LcdArray } from "../lcd/LcdArray";
+import { LcdCell } from "../lcd/LcdCell";
+import { LcdRow } from "../lcd/LcdRow";
+import { LcdWindow } from "../lcd/LcdWindow";
 
-// controls
-import { DataPin } from "./controls/DataPin";
-import { IconButton } from "./controls/IconButton";
-import { MenuDropdown } from "./controls/MenuDropdown";
-import { PulseButton } from "./controls/PulseButton";
-import { TextInput } from "./controls/TextInput";
-import { ToggleSwitch } from "./controls/ToggleSwitch";
+import type { ControlKey } from "./ComponentTest";
 
+export interface ComponentTestViewProps {
+  selectedControl: ControlKey;
+  isDropdownOpen: boolean;
+  onToggleDropdown: () => void;
+  onSelectControl: (key: ControlKey) => void;
 
-type ControlKey =
-  | "dataPin"
-  | "iconButton"
-  | "menuDropdown"
-  | "pulseButton"
-  | "textInput"
-  | "toggleSwitch";
+  isDataPinActive: boolean;
+  onToggleDataPin: () => void;
+
+  menuValue: string;
+  onMenuChange: (value: string) => void;
+  menuOptions: string[];
+
+  en: boolean;
+  onPulseClick: () => void;
+
+  hexInput: string;
+  onHexChange: (value: string) => void;
+
+  toggleOn: boolean;
+  onToggleSwitch: () => void;
+
+  pixelLit: boolean;
+  onTogglePixel: () => void;
+
+  onExecuteClick: () => void;
+}
+
+export const ComponentTestView: React.FC<ComponentTestViewProps> = (props) => {
+  const { theme } = useTheme();
 
 const controlOptions: { value: ControlKey; label: string }[] = [
   { value: "dataPin", label: "DataPin" },
@@ -25,44 +52,27 @@ const controlOptions: { value: ControlKey; label: string }[] = [
   { value: "pulseButton", label: "Pulse Button" },
   { value: "textInput", label: "Text Input" },
   { value: "toggleSwitch", label: "Toggle Switch" },
+  { value: "lcdPixel", label: "LCD Pixel" },
+  { value: "lcdArray", label: "LCD Array" },   // new
+  { value: "lcdCell", label: "LCD Cell" },
+  { value: "lcdRow", label: "LCD Row" },
+  { value: "lcdWindow", label: "LCD Window" },
+
 ];
 
-const ComponentTest: React.FC = () => {
-  const { theme } = useTheme();
 
-  const [selectedControl, setSelectedControl] =
-    useState<ControlKey>("dataPin");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  // DataPin state
-  const [isDataPinActive, setIsDataPinActive] = useState(false);
-
-  // MenuDropdown state
-  const [menuValue, setMenuValue] = useState("Clear Display");
-
-  // PulseButton state
-  const [en, setEn] = useState(false);
-
-  // TextInput state
-  const [hexInput, setHexInput] = useState("");
-
-  const handlePulse = () => {
-    setEn(true);
-    setTimeout(() => setEn(false), 200);
-  };
-
-  const current = controlOptions.find((o) => o.value === selectedControl)!;
-
-  const [toggleOn, setToggleOn] = useState(false);
+  const current =
+    controlOptions.find((o) => o.value === props.selectedControl) ??
+    controlOptions[0];
 
   const renderControl = () => {
-    switch (selectedControl) {
+    switch (props.selectedControl) {
       case "dataPin":
         return (
           <DataPin
             label="D0"
-            active={isDataPinActive}
-            onClick={() => setIsDataPinActive((v) => !v)}
+            active={props.isDataPinActive}
+            onClick={props.onToggleDataPin}
           />
         );
 
@@ -70,26 +80,16 @@ const ComponentTest: React.FC = () => {
         return (
           <IconButton
             label="EXECUTE"
-            onClick={() => {
-              console.log("EXECUTE from ComponentTest");
-            }}
+            onClick={props.onExecuteClick}
           />
         );
 
       case "menuDropdown":
         return (
           <MenuDropdown
-            value={menuValue}
-            options={[
-              "Clear Display",
-              "Return Home",
-              "Move Cursor Left",
-              "Move Cursor Right",
-            ]}
-            onChange={(v) => {
-              setMenuValue(v);
-              console.log("Menu changed:", v);
-            }}
+            value={props.menuValue}
+            options={props.menuOptions}
+            onChange={props.onMenuChange}
           />
         );
 
@@ -97,27 +97,58 @@ const ComponentTest: React.FC = () => {
         return (
           <PulseButton
             label="EN"
-            isActive={en}
-            onClick={handlePulse}
+            isActive={props.en}
+            onClick={props.onPulseClick}
           />
         );
 
       case "textInput":
         return (
           <TextInput
-            value={hexInput}
+            value={props.hexInput}
             placeholder="e.g. 0x4A"
-            onChange={setHexInput}
+            onChange={props.onHexChange}
           />
         );
 
       case "toggleSwitch":
-          return (
-            <ToggleSwitch
-              active={toggleOn}
-              onClick={() => setToggleOn((v) => !v)}
-            />
-          );
+        return (
+          <ToggleSwitch
+            active={props.toggleOn}
+            onClick={props.onToggleSwitch}
+          />
+        );
+
+      case "lcdPixel":
+      return (
+        <button
+          type="button"
+          onMouseDown={(e) => {
+            // left button = 0, require Shift
+            if (e.button === 0 && e.shiftKey) {
+              e.preventDefault();
+              props.onTogglePixel();
+            }
+          }}
+          className="p-3 rounded bg-transparent border border-transparent flex items-center justify-center"
+        >
+          <LcdPixel lit={props.pixelLit} />
+        </button>
+      );
+
+      case "lcdArray":
+      return (
+        <LcdArray/>
+      );
+
+       case "lcdCell":
+      return <LcdCell/>;
+
+      case "lcdRow":
+      return <LcdRow />;
+
+      case "lcdWindow":
+      return <LcdWindow />;
 
       default:
         return (
@@ -134,7 +165,7 @@ const ComponentTest: React.FC = () => {
       style={{ backgroundColor: theme.core.background }}
     >
       <div
-        className="w-full max-w-xl rounded-xl p-4"
+        className="w-full md:w-auto md:min-w-[24rem] rounded-xl p-4"
         style={{
           background: theme.panel.background,
           border: `1px solid ${theme.panel.border}`,
@@ -157,7 +188,7 @@ const ComponentTest: React.FC = () => {
         <div className="mb-4 inline-block relative">
           <button
             type="button"
-            onClick={() => setIsDropdownOpen((o) => !o)}
+            onClick={props.onToggleDropdown}
             className="px-3 py-2 rounded-md text-sm w-64 text-left"
             style={{
               background: theme.menuDropdown.background,
@@ -171,7 +202,7 @@ const ComponentTest: React.FC = () => {
             <span className="float-right opacity-70">▾</span>
           </button>
 
-          {isDropdownOpen && (
+          {props.isDropdownOpen && (
             <div
               className="absolute mt-1 w-64 rounded-md overflow-hidden z-10"
               style={{
@@ -184,10 +215,7 @@ const ComponentTest: React.FC = () => {
                 <button
                   key={opt.value}
                   type="button"
-                  onClick={() => {
-                    setSelectedControl(opt.value);
-                    setIsDropdownOpen(false);
-                  }}
+                  onClick={() => props.onSelectControl(opt.value)}
                   className="block w-full text-left px-3 py-2 text-sm"
                   style={{
                     color: theme.menuDropdown.text,
@@ -219,5 +247,3 @@ const ComponentTest: React.FC = () => {
     </div>
   );
 };
-
-export default ComponentTest;

@@ -67,6 +67,8 @@ trackOn: "#854d0e",                 // warm dark amber/brown [web:96]
     border: "#66CC33",
     text: "#CCFF66",
     placeholder: "#4B647A",
+    focusBorder: "#CCFF66",
+    focusShadow: "none"
   },
 
   menuDropdown: {
