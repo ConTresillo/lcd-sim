@@ -1,83 +1,121 @@
+// 1. Define Atomic Interfaces
+export interface PulseButtonTheme {
+  border: string;
+  inactiveBg: string;
+  inactiveText: string;
+  hoverBg: string;
+  hoverText: string;
+  activeBg: string;
+  activeText: string;
+  activeShadow: string;
+}
+
+export interface IconButtonTheme {
+  inactiveText: string;
+  inactiveBg: string;
+  border: string;
+  hoverBg: string;
+  hoverText: string;
+  activeBg: string;
+  activeText: string;
+  activeShadow: string;
+}
+
+export interface ToggleSwitchTheme {
+  trackOn: string;
+  trackOff: string;
+  knobOn: string;
+  knobOff: string;
+  glow: string;
+}
+
+export interface DataPinTheme {
+  inactiveBg: string,
+  inactiveBorder: string,
+  inactiveText: string,
+  hoverBorder: string,
+  hoverText: string,
+  activeBorder: string,
+  activeText: string,
+  activeShadow: string,
+}
+
+export interface TextInputTheme {
+  border: string;
+  background: string;
+  text: string;
+  placeholder: string;
+  focusBorder: string;
+  focusShadow: string;
+}
+
+export interface MenuDropdownTheme {
+  border: string;
+  background: string;
+  text: string;
+  shadow: string;
+  disabledBorder: string;
+  disabledText: string;
+  disabledBg: string;
+  hoverBg: string;
+}
+
+export interface LcdTheme {
+  pixelOn: string;
+  pixelOff: string;
+  screenBg: string;
+  pcbFrame: string;
+  pcbTrace: string;
+  pinBg: string;
+  mountHole: string;
+}
+
+export interface TerminalTheme {
+  background: string;
+  border: string;
+  text: string;
+  prefix: string;
+  shadow: string;
+}
+
+export interface NavbarTheme {
+  background: string;
+  border: string;
+  heading: string;
+  headingShadow: string;
+}
+
+// 2. The Main Theme Contract (Flat & Modular)
 export interface Theme {
-  brand: { primary: string; secondary: string; glass: string; warning: string };
-  background: { body: string; panel: string; terminal: string; deep: string };
-  lcd: {
-    pixel: { on: string; off: string };
-    pulse: { on: string; off: string };
-    screenBg: string;
-    pcbFrame: string;
-    pcbTrace: string;
-    pinBg: string;
-    mountHole: string;
+  // Core Brand Colors (Optional usage, good for reference)
+    core: {
+    primary: string;
+    secondary: string;
+    background: string;
+    panelBg: string;
+    glass: string;
+    warning: string;
+    bodyFont: string;
+    headingFont: string;
   };
-  ui: {
-    navbar: {
-      linkDefault: string;
-      linkActive: string;
-      heading: string;
-      headingShadow: string;
-    };
-    controllerPanel: {
-      inputBg: string;
-      inputBorder: string;
-      inputText: string;
-    };
-    gpioPanel: {
-      containerBg: string;
-      containerBorder: string;
-      heading: string;
-      toggleLabel: string;
-      label: string;
-      toggleActive: { track: string; circle: string; shadow: string };
-      toggleInactive: { track: string; circle: string };
-    };
-    statePanel: {
-      containerBg: string;
-      containerBorder: string;
-      heading: string;
-      label: string;
-    };
-    actionPanel: {
-      dropdownBg: string;
-      dropdownBorder: string;
-      dropdownShadow: string;
-      dropdownText: string;
-      dropdownHoverBg: string;
-      hexInputBg: string;
-      hexInputBorder: string;
-      hexInputText: string;
-    };
-    terminalPanel: {
-      containerBg: string;
-      containerBorder: string;
-      containerShadow: string;
-      headerText: string;
-      headerBorder: string;
-      logText: string;
-      logHoverBg: string;
-      logPrefix: string;
-      logShadow: string;
-      cursorText: string;
-      cursorPrefix: string;
-    };
-    buttons: {
-      neon: {
-        bg: string;
-        text: string;
-        shadow: string;
-        hoverBg: string;
-        hoverText: string;
-      };
-      pulse: {
-        active: { activeBg: string; activeText: string; activeShadow: string };
-        inactive: {
-          inactiveBg: string;
-          inactiveText: string;
-          inactiveShadow: string;
-        };
-      };
-      scrollbar: { track: string; thumb: string };
-      text: { primary: string; secondary: string };
-    };
+
+  // Component Themes (Independent)
+  pulseButton: PulseButtonTheme;
+  iconButton: IconButtonTheme;
+  toggleSwitch: ToggleSwitchTheme;
+  dataPin: DataPinTheme;
+  textInput: TextInputTheme;
+  menuDropdown: MenuDropdownTheme;
+  lcd: LcdTheme;
+  
+  // Container/Layout Themes
+  terminal: TerminalTheme;
+  navbar: NavbarTheme;
+  
+  // Generic Panel Styles (fallback)
+  panel: {
+    border: string;
+    background: string;
+    label: string;
   };
 }

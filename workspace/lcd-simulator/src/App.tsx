@@ -1,25 +1,16 @@
-// // src/App.tsx
-// import * as React from 'react';
-// import ComponentTest from './components/controls/ComponentTest';
-// 
-// const App: React.FC = () => {
-//   return (
-//     <div className="min-h-screen">
-//       <ComponentTest />
-//     </div>
-//   );
-// };
-// 
-// export default App;
-
-import React from 'react';
-import ComponentTest from './components/ComponentTest.tsx';
+// src/App.tsx
+import React from "react";
+import { ThemeProvider } from "./components/themes/ThemeProvider";
+import AppLayout from "./components/layout/AppLayout";
+import ComponentTest from "./components/ComponentTest"; // or your router outlet
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen">
-      <ComponentTest />
-    </div>
+    <ThemeProvider>
+      <AppLayout>
+        <ComponentTest />
+      </AppLayout>
+    </ThemeProvider>
   );
 };
 

@@ -1,73 +1,67 @@
-// // components/controls/PulseButton.tsx
-// import React from 'react';
-// import { useTheme } from '../../../application/shared/themeContext';
-// 
-// interface PulseButtonProps {
-//   active: boolean;
-//   label: string;
-//   onClick?: () => void;
-//   onPulse?: () => void; // <-- added for ComponentTest
-// }
-// 
-// const PulseButton: React.FC<PulseButtonProps> = ({ active, label, onClick, onPulse }) => {
-//   const theme = useTheme();
-// 
-//   const style = active
-//     ? theme.ui.buttons.pulse.active
-//     : theme.ui.buttons.pulse.inactive;
-// 
-//   return (
-//     <button
-//       onClick={() => {
-//         if (onClick) onClick();
-//         if (onPulse) onPulse(); // <-- call onPulse if provided
-//       }}
-//       style={{
-//         background: style.activeBg ?? style.inactiveBg,
-//         color: style.activeText ?? style.inactiveText,
-//         boxShadow: style.activeShadow ?? style.inactiveShadow,
-//       }}
-//       className="px-4 py-2 rounded font-semibold transition"
-//     >
-//       {label}
-//     </button>
-//   );
-// };
-// 
-// export default PulseButton;
+// src/components/controls/PulseButton.tsx
+import React, { useState } from "react";
+import { useTheme } from "../themes/ThemeProvider";
 
-import React from 'react';
-import { useTheme } from '../../../application/shared/themeContext';
-
-interface PulseButtonProps {
-  active: boolean;
+export interface PulseButtonProps {
   label: string;
+  isActive?: boolean;         // optional so it can be uncontrolled
   onClick?: () => void;
-  onPulse?: () => void;
 }
 
-const PulseButton: React.FC<PulseButtonProps> = ({ active, label, onClick, onPulse }) => {
-  const theme = useTheme();
-  const style = active
-    ? theme.ui.buttons.pulse.active
-    : theme.ui.buttons.pulse.inactive;
+export const PulseButton: React.FC<PulseButtonProps> = ({
+  label,
+  isActive,
+  onClick,
+}) => {
+  const { theme } = useTheme();
+  const [state, setState] = useState<"idle" | "hover" | "active">("idle");
+
+  const styles: Record<"idle" | "hover" | "active", React.CSSProperties> = {
+    idle: {
+      background: theme.pulseButton.inactiveBg,
+      color: theme.pulseButton.inactiveText,
+      boxShadow: isActive ? theme.pulseButton.activeShadow : "none",
+      transform: "scale(1.0)",
+    },
+    hover: {
+      background: theme.pulseButton.hoverBg,
+      color: theme.pulseButton.hoverText,
+      boxShadow: isActive ? theme.pulseButton.activeShadow : "none",
+      transform: "scale(1.0)",
+    },
+    active: {
+      background: theme.pulseButton.activeBg,
+      color: theme.pulseButton.activeText,
+      boxShadow: theme.pulseButton.activeShadow,
+      transform: "scale(1.04)", // slightly calmer
+    },
+  };
 
   return (
     <button
-      onClick={() => {
-        if (onClick) onClick();
-        if (onPulse) onPulse();
-      }}
+      type="button"
+      className="
+        w-10 h-10
+        rounded
+        border
+        flex items-center justify-center
+        text-xs font-bold
+        cursor-pointer select-none
+        transition-all duration-250 ease-out
+        focus:outline-none focus:ring-1
+      "
       style={{
-        background: style.activeBg ?? style.inactiveBg,
-        color: style.activeText ?? style.inactiveText,
-        boxShadow: style.activeShadow ?? style.inactiveShadow,
+        borderColor: theme.pulseButton.border,
+        fontFamily: theme.core.bodyFont,
+        ...styles[state],
       }}
-      className="px-4 py-2 rounded font-semibold transition"
+      onMouseEnter={() => setState("hover")}
+      onMouseLeave={() => setState("idle")}
+      onMouseDown={() => setState("active")}
+      onMouseUp={() => setState("hover")}
+      onClick={onClick}
     >
       {label}
     </button>
   );
 };
-
-export default PulseButton;

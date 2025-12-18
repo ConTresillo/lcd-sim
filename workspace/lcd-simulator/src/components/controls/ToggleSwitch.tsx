@@ -1,92 +1,50 @@
-// // src/components/controls/ToggleSwitch.tsx
-// import React from 'react';
-// import { useTheme } from '../../../application/shared/themeContext';
-// 
-// interface ToggleSwitchProps {
-//   checked: boolean;
-//   label?: string;
-//   onChange: (val: boolean) => void;
-// }
-// 
-// const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, label, onChange }) => {
-//   const theme = useTheme();
-// 
-//   const track = checked
-//     ? theme.ui.gpioPanel.toggleActive.track
-//     : theme.ui.gpioPanel.toggleInactive.track;
-// 
-//   const knob = checked
-//     ? theme.ui.gpioPanel.toggleActive.circle
-//     : theme.ui.gpioPanel.toggleInactive.circle;
-// 
-//   return (
-//     <div className="flex items-center gap-3">
-//       {label && (
-//         <span style={{ color: theme.ui.gpioPanel.label }} className="text-sm">
-//           {label}
-//         </span>
-//       )}
-// 
-//       <button
-//         onClick={() => onChange(!checked)}
-//         style={{ background: track }}
-//         className="w-10 h-5 rounded-full relative"
-//       >
-//         <span
-//           style={{
-//             background: knob,
-//             transform: checked ? 'translateX(20px)' : 'translateX(2px)',
-//           }}
-//           className="absolute top-[2px] w-4 h-4 rounded-full transition"
-//         />
-//       </button>
-//     </div>
-//   );
-// };
-// 
-// export default ToggleSwitch;
+// src/components/controls/ToggleSwitch.tsx
+import React from "react";
+import { useTheme } from "../themes/ThemeProvider";
 
-import React from 'react';
-import { useTheme } from '../../../application/shared/themeContext';
-
-interface ToggleSwitchProps {
-  checked: boolean;
-  label?: string;
-  onChange: (val: boolean) => void;
+export interface ToggleSwitchProps {
+  active: boolean;
+  onClick: () => void;
 }
 
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, label, onChange }) => {
-  const theme = useTheme();
-  const track = checked
-    ? theme.ui.gpioPanel.toggleActive.track
-    : theme.ui.gpioPanel.toggleInactive.track;
-  const knob = checked
-    ? theme.ui.gpioPanel.toggleActive.circle
-    : theme.ui.gpioPanel.toggleInactive.circle;
+export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
+  active,
+  onClick,
+}) => {
+  const { theme } = useTheme();
 
   return (
-    <div className="flex items-center gap-3">
-      {label && (
-        <span style={{ color: theme.ui.gpioPanel.label }} className="text-sm">
-          {label}
-        </span>
-      )}
-
-      <button
-        onClick={() => onChange(!checked)}
-        style={{ background: track }}
-        className="w-10 h-5 rounded-full relative"
-      >
-        <span
-          style={{
-            background: knob,
-            transform: checked ? 'translateX(20px)' : 'translateX(2px)',
-          }}
-          className="absolute top-[2px] w-4 h-4 rounded-full transition"
-        />
-      </button>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className="
+        w-10
+        h-5
+        rounded-full
+        flex
+        items-center
+        px-0.5
+        transition-all
+        duration-200
+      "
+      style={{
+        backgroundColor: active ? theme.toggleSwitch.trackOn : theme.toggleSwitch.trackOff,
+        boxShadow: active ? theme.toggleSwitch.glow : "none",
+      }}
+    >
+      <div
+        className="
+          h-4
+          w-4
+          rounded-full
+          transition-transform
+          duration-200
+        "
+        style={{
+          backgroundColor: active ? theme.toggleSwitch.knobOn : theme.toggleSwitch.knobOff,
+          transform: active ? "translateX(18px)" : "translateX(0px)",
+        }}
+      />
+    </button>
   );
 };
-
-export default ToggleSwitch;

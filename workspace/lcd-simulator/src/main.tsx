@@ -1,30 +1,14 @@
-// // main.tsx
-// import React from 'react';
-// import { createRoot } from 'react-dom/client';
-// import './index.css';
-// import App from './App';
-// import { ThemeContext } from '../application/shared/themeContext';
-// import { neonBlue } from '../infrastructure/themes/neonBlue';
-// 
-// createRoot(document.getElementById('root')!).render(
-//   <React.StrictMode>
-//     <ThemeContext.Provider value={neonBlue}>
-//       <App />
-//     </ThemeContext.Provider>
-//   </React.StrictMode>
-// );
+// src/main.tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./index.css";
+import { ThemeProvider } from "./components/themes/ThemeProvider";
 
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App';
-import { ThemeContext } from '../application/shared/themeContext';
-import { neonBlue } from '../infrastructure/themes/neonBlue';
-
-createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeContext.Provider value={neonBlue}>
+    <ThemeProvider>
       <App />
-    </ThemeContext.Provider>
+    </ThemeProvider>
   </React.StrictMode>
 );

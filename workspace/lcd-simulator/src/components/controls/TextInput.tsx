@@ -1,85 +1,54 @@
-// // components/controls/TextInput.tsx
-// import React from 'react';
-// import { useTheme } from '../../../application/shared/themeContext';
-// 
-// type Variant = 'plain' | 'terminal';
-// 
-// interface TextInputProps {
-//   value: string;
-//   onChange: (val: string) => void;
-//   placeholder?: string;
-//   onEnter?: () => void;
-//   variant?: Variant;
-// }
-// 
-// const TextInput: React.FC<TextInputProps> = ({
-//   value,
-//   onChange,
-//   placeholder,
-//   onEnter,
-//   variant = 'plain',
-// }) => {
-//   const theme = useTheme();
-// 
-//   const wrapperStyle =
-//     variant === 'terminal'
-//       ? {
-//           background: theme.ui.terminalPanel.containerBg,
-//           borderColor: theme.ui.terminalPanel.containerBorder,
-//         }
-//       : {
-//           background: theme.ui.controllerPanel.inputBg,
-//           borderColor: theme.ui.controllerPanel.inputBorder,
-//         };
-// 
-//   return (
-//     <div
-//       style={wrapperStyle}
-//       className="border rounded px-3 py-2"
-//     >
-//       <input
-//         className="bg-transparent w-full outline-none font-mono text-sm"
-//         style={{ color: theme.ui.controllerPanel.inputText }}
-//         value={value}
-//         placeholder={placeholder}
-//         onChange={(e) => onChange(e.target.value)}
-//         onKeyDown={(e) => e.key === 'Enter' && onEnter?.()}
-//       />
-//     </div>
-//   );
-// };
-// 
-// export default TextInput;
+// TextInput.tsx
+import React from "react";
+import { useTheme } from "../themes/ThemeProvider";
 
-import React from 'react';
-import { useTheme } from '../../../application/shared/themeContext';
-
-interface TextInputProps {
+export interface TextInputProps {
   value: string;
-  onChange: (val: string) => void;
   placeholder?: string;
+  onChange: (value: string) => void;
 }
 
-const TextInput: React.FC<TextInputProps> = ({ value, onChange, placeholder }) => {
-  const theme = useTheme();
+export const TextInput: React.FC<TextInputProps> = ({
+  value,
+  placeholder,
+  onChange,
+}) => {
+  const { theme } = useTheme();
+
+  const style: React.CSSProperties = {
+    fontFamily: theme.core.bodyFont,
+    background: theme.textInput.background,
+    borderColor: theme.textInput.border,
+    color: theme.textInput.text,
+    boxShadow: "none",
+    // CSS variable for placeholder
+    "--ti-placeholder-color": theme.textInput.placeholder,
+  } as React.CSSProperties; // allows the custom prop key [web:51][web:56]
 
   return (
-    <div
-      style={{
-        background: theme.ui.controllerPanel.inputBg,
-        borderColor: theme.ui.controllerPanel.inputBorder,
-      }}
-      className="border rounded px-3 py-2"
-    >
-      <input
-        className="bg-transparent w-full outline-none font-mono text-sm"
-        style={{ color: theme.ui.controllerPanel.inputText }}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
+  <input
+    type="text"
+    value={value}
+    placeholder={placeholder}
+    onChange={(e) => onChange(e.target.value)}
+    className="
+      rounded
+      border
+      px-3 py-2
+      text-xs
+      transition-all duration-180 ease-out
+      focus:outline-none
+    "
+    style={{
+      fontFamily: theme.core.bodyFont,
+      background: theme.textInput.background,
+      borderColor: theme.textInput.border,
+      color: theme.textInput.text,
+      boxShadow: "none",
+      width: "7.5rem", // ≈ IconButton width
+      "--ti-placeholder-color": theme.textInput.placeholder,
+    } as React.CSSProperties}
       />
-    </div>
-  );
-};
+    );
 
-export default TextInput;
+};

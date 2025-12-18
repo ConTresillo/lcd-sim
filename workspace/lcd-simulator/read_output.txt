@@ -1,444 +1,60 @@
 
-📄 src\components\ComponentTest.tsx
+📄 src\components\controls\IconButton.tsx
 --------------------------------------------------------------------------------
+import React from "react";
+import { useTheme } from "../themes/ThemeProvider";
 
-import React, { useState } from 'react';
-import { Power, Trash2 } from 'lucide-react';
-import MenuDropdown from './controls/MenuDropdown.tsx';
-import TextInput from './controls/TextInput.tsx';
-import IconButton from './controls/IconButton.tsx';
-import DataPin from './controls/DataPin.tsx';
-import PulseButton from './controls/PulseButton.tsx';
-import ToggleSwitch from './controls/ToggleSwitch.tsx';
-import { useTheme } from '../../application/shared/themeContext.ts';
-
-const ComponentTest: React.FC = () => {
-  const theme = useTheme();
-  const [dropdown, setDropdown] = useState('8-bit');
-  const [text, setText] = useState('');
-  const [pins, setPins] = useState<boolean[]>(Array(8).fill(false));
-  const [pulse, setPulse] = useState(false);
-  const [toggle, setToggle] = useState(false);
-
-  return (
-    <div
-      className="min-h-screen p-8 space-y-8"
-      style={{ background: theme.background.body }}
-    >
-      <div className="flex items-center gap-4">
-        <IconButton icon={<Power size={16} />} label="Power" active />
-        <IconButton icon={<Trash2 size={16} />} label="Clear" />
-      </div>
-
-      <div className="max-w-xs">
-        <MenuDropdown
-          value={dropdown}
-          options={['4-bit', '8-bit', 'I2C']}
-          onChange={setDropdown}
-        />
-      </div>
-
-      <div className="max-w-xs">
-        <TextInput
-          value={text}
-          onChange={setText}
-          placeholder="Enter command..."
-        />
-      </div>
-
-      <div className="flex gap-3">
-        {pins.map((on, i) => (
-          <DataPin
-            key={i}
-            label={`D${i}`}
-            active={on}
-            onClick={() =>
-              setPins((prev) =>
-                prev.map((v, idx) => (idx === i ? !v : v))
-              )
-            }
-          />
-        ))}
-      </div>
-
-      <div className="flex items-center gap-6">
-        <ToggleSwitch label="Backlight" checked={toggle} onChange={setToggle} />
-        <PulseButton
-          label="EN"
-          active={pulse}
-          onPulse={() => {
-            setPulse(true);
-            setTimeout(() => setPulse(false), 120);
-          }}
-        />
-      </div>
-    </div>
-  );
-};
-
-export default ComponentTest;
-
-📄 src\components\index.ts
---------------------------------------------------------------------------------
-
-
-📄 src\components\controls\DataPin.tsx
---------------------------------------------------------------------------------
-import React from 'react';
-import { useTheme } from '../../../application/shared/themeContext';
-
-interface DataPinProps {
+export interface IconButtonProps {
   label: string;
   active: boolean;
   onClick?: () => void;
 }
 
-const DataPin: React.FC<DataPinProps> = ({ label, active, onClick }) => {
-  const theme = useTheme();
+export const IconButton: React.FC<IconButtonProps> = ({
+  label,
+  active,
+  onClick,
+}) => {
+  const { theme } = useTheme();
 
-  const style = active
+  const style: React.CSSProperties = active
     ? {
-        borderColor: theme.brand.primary,
-        background: theme.brand.glass,
-        color: theme.brand.primary,
-        boxShadow: theme.ui.buttons.neon.shadow,
-        transform: 'scale(1.1)',
+        borderColor: theme.iconButton.activeBorder,
+        background: theme.iconButton.activeColor,
+        color: theme.iconButton.hoverText,
+        boxShadow: theme.iconButton.activeShadow,
+        transform: "scale(1.02)",
       }
     : {
-        borderColor: theme.ui.gpioPanel.containerBorder,
-        background: 'transparent',
-        color: theme.ui.buttons.text.secondary,
+        borderColor: theme.iconButton.activeBorder,
+        background: theme.iconButton.inactiveColor,
+        color: theme.iconButton.hoverText,
+        boxShadow: "none",
+        transform: "scale(1.0)",
       };
 
   return (
-    <div
-      onClick={onClick}
-      style={style}
-      className="w-10 h-10 rounded border flex items-center justify-center font-mono text-sm select-none cursor-pointer transition-all duration-75 ease-out hover:scale-110"
-    >
-      {label}
-    </div>
-  );
-};
-
-export default DataPin;
-
-
-📄 src\components\controls\IconButton.tsx
---------------------------------------------------------------------------------
-import React from 'react';
-import { useTheme } from '../../../application/shared/themeContext';
-
-interface IconButtonProps {
-  icon: React.ReactNode;
-  label?: string;
-  active?: boolean;
-  onClick?: () => void;
-}
-
-const IconButton: React.FC<IconButtonProps> = ({
-  icon,
-  label,
-  active = false,
-  onClick,
-}) => {
-  const theme = useTheme();
-
-  const inactiveColor = theme.ui.buttons.text.secondary;
-
-  return (
     <button
+      type="button"
       onClick={onClick}
+      className="
+        w-full
+        py-2 px-4
+        rounded
+        border
+        flex items-center justify-center
+        text-sm font-bold
+        cursor-pointer select-none
+        transition-all duration-100 ease-out
+        hover:scale-105
+        focus:outline-none focus:ring-1
+      "
       style={{
-        color: active ? theme.brand.primary : inactiveColor,
-        borderColor: active ? theme.brand.primary : 'transparent',
-        boxShadow: active ? theme.ui.buttons.neon.shadow : 'none',
+        ...style,
+        fontFamily: theme.core.bodyFont,
       }}
-      className="flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs transition"
-    >
-      {icon}
-      {label}
-    </button>
-  );
-};
-
-export default IconButton;
-
-
-📄 src\components\controls\MenuDropdown.tsx
---------------------------------------------------------------------------------
-
-import React from 'react';
-import { ChevronDown } from 'lucide-react';
-import { useTheme } from '../../../application/shared/themeContext';
-
-interface MenuDropdownProps {
-  value: string;
-  options: string[];
-  onChange: (val: string) => void;
-}
-
-const MenuDropdown: React.FC<MenuDropdownProps> = ({ value, options, onChange }) => {
-  const theme = useTheme();
-
-  return (
-    <div className="relative w-full">
-      <div
-        style={{
-          background: theme.ui.controllerPanel.inputBg,
-          borderColor: theme.ui.controllerPanel.inputBorder,
-          color: theme.ui.controllerPanel.inputText,
-        }}
-        className="border rounded px-3 py-2 text-sm flex justify-between items-center"
-      >
-        {value} <ChevronDown size={14} />
-      </div>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-      >
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-};
-
-export default MenuDropdown;
-
-📄 src\components\controls\PulseButton.tsx
---------------------------------------------------------------------------------
-
-import React from 'react';
-import { useTheme } from '../../../application/shared/themeContext';
-
-interface PulseButtonProps {
-  active: boolean;
-  label: string;
-  onClick?: () => void;
-  onPulse?: () => void;
-}
-
-const PulseButton: React.FC<PulseButtonProps> = ({ active, label, onClick, onPulse }) => {
-  const theme = useTheme();
-  const style = active
-    ? theme.ui.buttons.pulse.active
-    : theme.ui.buttons.pulse.inactive;
-
-  return (
-    <button
-      onClick={() => {
-        if (onClick) onClick();
-        if (onPulse) onPulse();
-      }}
-      style={{
-        background: style.activeBg ?? style.inactiveBg,
-        color: style.activeText ?? style.inactiveText,
-        boxShadow: style.activeShadow ?? style.inactiveShadow,
-      }}
-      className="px-4 py-2 rounded font-semibold transition"
     >
       {label}
     </button>
   );
 };
-
-export default PulseButton;
-
-📄 src\components\controls\TextInput.tsx
---------------------------------------------------------------------------------
-
-import React from 'react';
-import { useTheme } from '../../../application/shared/themeContext';
-
-interface TextInputProps {
-  value: string;
-  onChange: (val: string) => void;
-  placeholder?: string;
-}
-
-const TextInput: React.FC<TextInputProps> = ({ value, onChange, placeholder }) => {
-  const theme = useTheme();
-
-  return (
-    <div
-      style={{
-        background: theme.ui.controllerPanel.inputBg,
-        borderColor: theme.ui.controllerPanel.inputBorder,
-      }}
-      className="border rounded px-3 py-2"
-    >
-      <input
-        className="bg-transparent w-full outline-none font-mono text-sm"
-        style={{ color: theme.ui.controllerPanel.inputText }}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
-  );
-};
-
-export default TextInput;
-
-📄 src\components\controls\ToggleSwitch.tsx
---------------------------------------------------------------------------------
-
-import React from 'react';
-import { useTheme } from '../../../application/shared/themeContext';
-
-interface ToggleSwitchProps {
-  checked: boolean;
-  label?: string;
-  onChange: (val: boolean) => void;
-}
-
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, label, onChange }) => {
-  const theme = useTheme();
-  const track = checked
-    ? theme.ui.gpioPanel.toggleActive.track
-    : theme.ui.gpioPanel.toggleInactive.track;
-  const knob = checked
-    ? theme.ui.gpioPanel.toggleActive.circle
-    : theme.ui.gpioPanel.toggleInactive.circle;
-
-  return (
-    <div className="flex items-center gap-3">
-      {label && (
-        <span style={{ color: theme.ui.gpioPanel.label }} className="text-sm">
-          {label}
-        </span>
-      )}
-
-      <button
-        onClick={() => onChange(!checked)}
-        style={{ background: track }}
-        className="w-10 h-5 rounded-full relative"
-      >
-        <span
-          style={{
-            background: knob,
-            transform: checked ? 'translateX(20px)' : 'translateX(2px)',
-          }}
-          className="absolute top-[2px] w-4 h-4 rounded-full transition"
-        />
-      </button>
-    </div>
-  );
-};
-
-export default ToggleSwitch;
-
-📄 src\components\layout\Navbar.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\layout\Sidebar.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\lcd\CursorOverlay.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\lcd\LcdCell.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\lcd\LcdDisplay.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\lcd\LcdRow.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\lcd\LcdWindow.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\modals\SettingsModal.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\panels\ActionPanel.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\panels\CgramEditorPanel.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\panels\ControllerPanel.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\panels\GpioPanel.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\panels\StatePanel.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\panels\TerminalPanel.tsx
---------------------------------------------------------------------------------
-
-
-📄 src\components\themes\ThemePreview.jsx
---------------------------------------------------------------------------------
-import React from 'react';
-import { neonBlue } from '../../../infrastructure/themes/neonBlue';
-
-const renderColors = (obj, path = []) => {
-  return Object.entries(obj).map(([key, value]) => {
-    const currentPath = [...path, key];
-    if (typeof value === 'string') {
-      return (
-        <div
-          key={currentPath.join('.')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            margin: '4px 0',
-          }}
-        >
-          <div
-            style={{
-              width: '60px',
-              height: '24px',
-              backgroundColor: value,
-              border: '1px solid #000',
-              marginRight: '8px',
-            }}
-          />
-          <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>
-            {currentPath.join('.')} → {value}
-          </span>
-        </div>
-      );
-    } else if (typeof value === 'object') {
-      return (
-        <div key={currentPath.join('.')} style={{ marginLeft: '10px' }}>
-          <strong>{key}</strong>
-          {renderColors(value, currentPath)}
-        </div>
-      );
-    } else {
-      return null;
-    }
-  });
-};
-
-export default function ThemePreview() {
-  return (
-    <div style={{ padding: '16px', fontFamily: 'sans-serif' }}>
-      <h1>Theme Preview: Neon Blue</h1>
-      {renderColors(neonBlue)}
-    </div>
-  );
-}

@@ -1,38 +1,56 @@
-// components/controls/IconButton.tsx
-import React from 'react';
-import { useTheme } from '../../../application/shared/themeContext';
+import React, { useState } from "react";
+import { useTheme } from "../themes/ThemeProvider";
 
-interface IconButtonProps {
-  icon: React.ReactNode;
-  label?: string;
-  active?: boolean;
+export interface IconButtonProps {
+  label: string;
   onClick?: () => void;
 }
 
-const IconButton: React.FC<IconButtonProps> = ({
-  icon,
-  label,
-  active = false,
-  onClick,
-}) => {
-  const theme = useTheme();
+export const IconButton: React.FC<IconButtonProps> = ({ label, onClick }) => {
+  const { theme } = useTheme();
+  const [state, setState] = useState<"idle" | "hover" | "active">("idle");
 
-  const inactiveColor = theme.ui.buttons.text.secondary;
+  const styles: Record<typeof state, React.CSSProperties> = {
+    idle: {
+      background: theme.iconButton.inactiveBg,
+      color: theme.iconButton.inactiveText,
+      boxShadow: "none",
+      transform: "scale(1)",
+    },
+    hover: {
+      background: theme.iconButton.hoverBg,
+      color: theme.iconButton.hoverText,
+      boxShadow: "none",
+      transform: "scale(1)",
+    },
+    active: {
+      background: theme.iconButton.activeBg,
+      color: theme.iconButton.activeText,
+      boxShadow: theme.iconButton.activeShadow,
+      transform: "scale(1.04)",
+    },
+  };
 
   return (
     <button
-      onClick={onClick}
+      type="button"
+      className="px-4 py-2 rounded border flex items-center justify-center
+                 text-xs font-bold cursor-pointer select-none
+                 transition-all duration-400 ease-out
+                 focus:outline-none focus:ring-1"
       style={{
-        color: active ? theme.brand.primary : inactiveColor,
-        borderColor: active ? theme.brand.primary : 'transparent',
-        boxShadow: active ? theme.ui.buttons.neon.shadow : 'none',
+        borderColor: theme.iconButton.border,
+        fontFamily: theme.core.bodyFont,
+        ...styles[state],
       }}
-      className="flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs transition"
+      onMouseEnter={() => setState("hover")}
+      onMouseLeave={() => setState("idle")}
+      onMouseDown={() => setState("active")}
+      onMouseUp={() => setState("hover")}
+      onClick={onClick}
     >
-      {icon}
       {label}
     </button>
   );
 };
 
-export default IconButton;

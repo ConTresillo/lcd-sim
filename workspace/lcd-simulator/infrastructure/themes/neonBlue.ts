@@ -1,30 +1,91 @@
-
-import { Theme } from './Theme';
+import type { Theme } from './Theme';
 
 export const neonBlue: Theme = {
-  brand: {
-    primary: '#00F0FF',
-    secondary: '#22d3ee',
-    glass: 'rgba(255, 255, 255, 0.05)',
-    warning: '#facc15',
+  core: {
+  primary: "#00F0FF",
+  secondary: "#22d3ee",
+  background: "#0f172a",
+  panelBg: "rgba(255,255,255,0.05)",
+  glass: "rgba(255, 255, 255, 0.05)",
+  warning: "#facc15",
+  bodyFont: "'Orbitron', sans-serif",
+  headingFont: "'Orbitron', sans-serif",
   },
 
-  background: {
-    body: '#0f172a',
-    panel: 'rgba(255,255,255,0.05)',
-    terminal: '#050b14',
-    deep: '#030612',
+  // --- ATOMIC COMPONENTS ---
+
+  pulseButton: {
+    border: "#facc15",                 // thin yellow outline
+    inactiveBg: "#111827",             // dark slate-ish fill
+    inactiveText: "#facc15",           // same yellow as border
+    hoverBg: "#facc15",                // slightly lighter on hover
+    hoverText: "#00010a",              // softer warm text
+    activeBg: "#facc15",               // full yellow when fired
+    activeText: "#00010a",
+    activeShadow: "0 0 22px rgba(250, 204, 21, 0.95)", // big glow
+},
+
+
+  iconButton: {
+  inactiveText: "#00F0FF",
+  inactiveBg: "rgba(0,240,255,0.08)",       // subtle fill
+  border: "#00F0FF",
+  hoverBg: "#00F0FF",                       // full cyan
+  hoverText: "#00111a",                     // dark text
+  activeBg: "#00F0FF",
+  activeText: "#00111a",
+  activeShadow: "0 0 16px rgba(0,240,255,0.9)",
+},
+
+
+
+  toggleSwitch: {
+    trackOn: "#075985",
+    trackOff: "#374151",
+    knobOn: "#22d3ee",
+    knobOff: "#d1d5db",
+    glow: "0 0 18px rgba(34, 211, 238, 0.55)",
   },
+
+dataPin: {
+  inactiveBg: "#020617",
+  inactiveBorder: "#1f2937",
+  inactiveText: "#4b5563",
+  hoverBorder: "#9ca3af",
+  hoverText: "#e5e7eb",
+  activeBorder: "#22d3ee",
+  activeText: "#e0faff",
+  activeShadow: "0 0 18px rgba(34, 211, 238, 0.9)",
+},
+
+
+  textInput: {
+  border: "rgba(148, 163, 184, 0.4)",
+  background: "#020617",
+  text: "#e5e7eb",
+  placeholder: "rgba(148, 163, 184, 0.7)",
+  focusBorder: "#22d3ee",
+  focusShadow: "0 0 16px rgba(34, 211, 238, 0.55)",
+},
+
+  // in neonBlue theme
+  menuDropdown: {
+  border: "#22d3ee",
+  background: "rgba(15,23,42,0.9)",
+  text: "#a5f3fc",
+  shadow: "0 0 5px rgba(34,211,238,0.2)",
+  disabledBorder: "rgba(148,163,184,0.5)",
+  disabledText: "#6b7280",
+  disabledBg: "rgba(15,23,42,0.6)",
+  hoverBg: "rgba(34,211,238,0.15)",
+},
+
+
+
 
   lcd: {
-    pixel: {
-      on: '#4DD0E1',
-      off: '#0f1f22',
-    },
-    pulse: {
-      on: '#4DD0E1',
-      off: '#0f1f22',
-    },
+    pixelOn: '#4DD0E1',
+    pixelOff: '#0f1f22',
     screenBg: '#1a2e2e',
     pcbFrame: '#0c2229',
     pcbTrace: '#06b6d4',
@@ -32,97 +93,26 @@ export const neonBlue: Theme = {
     mountHole: '#b8860b',
   },
 
-  ui: {
-    navbar: {
-      linkDefault: '#9ca3af',
-      linkActive: '#00F0FF',
-      heading: '#00F0FF',
-      headingShadow: '0 0 10px rgba(0,240,255,0.6)',
-    },
+  // --- CONTAINERS ---
 
-    controllerPanel: {
-      inputBg: '#1e293b',
-      inputBorder: '#06b6d4',
-      inputText: '#22d3ee',
-    },
+  terminal: {
+    background: '#050b14',
+    border: 'rgba(6,182,212,0.3)',
+    text: '#22d3ee',
+    prefix: '#06b6d4',
+    shadow: 'inset 0 0 20px rgba(0,0,0,0.5)',
+  },
 
-    gpioPanel: {
-      containerBg: 'rgba(255,255,255,0.05)',
-      containerBorder: 'rgba(255,255,255,0.1)',
-      heading: '#00F0FF',
-      toggleLabel: '#22d3ee',
-      label: '#9ca3af',
-      toggleActive: {
-        track: '#06b6d4',
-        circle: '#22d3ee',
-        shadow: '0 0 8px #22d3ee',
-      },
-      toggleInactive: {
-        track: '#4b5563',
-        circle: '#9ca3af',
-      },
-    },
+  navbar: {
+    background: 'rgba(255,255,255,0.05)',
+    border: 'rgba(0,240,255,0.6)',
+    heading: '#00F0FF',
+    headingShadow: '0 0 10px rgba(0,240,255,0.6)',
+  },
 
-    statePanel: {
-      containerBg: 'rgba(255,255,255,0.05)',
-      containerBorder: 'rgba(255,255,255,0.1)',
-      heading: '#22d3ee',
-      label: '#9ca3af',
-    },
-
-    actionPanel: {
-      dropdownBg: '#1e293b',
-      dropdownBorder: '#06b6d4',
-      dropdownShadow: '0 0 10px rgba(34,211,238,0.2)',
-      dropdownText: '#22d3ee',
-      dropdownHoverBg: 'rgba(6,182,212,0.2)',
-      hexInputBg: '#1e293b',
-      hexInputBorder: '#06b6d4',
-      hexInputText: '#22d3ee',
-    },
-
-    terminalPanel: {
-      containerBg: '#050b14',
-      containerBorder: 'rgba(6,182,212,0.3)',
-      containerShadow: 'inner',
-      headerText: '#06b6d4',
-      headerBorder: 'rgba(6,182,212,0.5)',
-      logText: '#22d3ee',
-      logHoverBg: 'rgba(255,255,255,0.05)',
-      logPrefix: '#06b6d4',
-      logShadow: '0 0 2px rgba(34,211,238,0.3)',
-      cursorText: '#06b6d4',
-      cursorPrefix: '#0ea5e9',
-    },
-
-    buttons: {
-      neon: {
-        bg: 'rgba(6,182,212,0.2)',
-        text: '#22d3ee',
-        shadow: '0 0 10px rgba(34,211,238,0.2)',
-        hoverBg: '#22d3ee',
-        hoverText: 'black',
-      },
-      pulse: {
-        active: {
-          activeBg: 'rgba(34,197,94,0.25)',
-          activeText: '#bbf7d0',
-          activeShadow: '0 0 12px rgba(34,197,94,0.8)',
-        },
-        inactive: {
-          inactiveBg: '#020617',
-          inactiveText: '#e5e7eb',
-          inactiveShadow: 'none',
-        },
-      },
-      scrollbar: {
-        track: '#1e293b',
-        thumb: '#334155',
-      },
-      text: {
-        primary: 'white',
-        secondary: '#9ca3af',
-      },
-    },
+  panel: {
+    background: 'rgba(255,255,255,0.05)',
+    border: 'rgba(255,255,255,0.1)',
+    label: '#9ca3af',
   },
 };
